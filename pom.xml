@@ -35,7 +35,6 @@
 		<module>wicket-select2</module>
 		<module>wicket-select2-examples</module>
 	</modules>
-
 	<build>
 		<resources>
 			<resource>

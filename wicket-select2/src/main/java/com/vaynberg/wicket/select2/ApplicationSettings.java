@@ -42,7 +42,7 @@ public class ApplicationSettings {
     private ResourceReference jqueryMinifiedReference = new PackageResourceReference(ApplicationSettings.class,
 	    "res/jquery-1.7.2.min.js");
 
-    private boolean includeJquery = true;
+    private boolean includeJquery = false;
     private boolean includeMouseWheel = true;
     private boolean includeJavascript = true;
     private boolean includeCss = true;

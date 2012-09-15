@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.json.JSONException;
@@ -83,12 +84,12 @@ public class Select2MultiChoice<T> extends AbstractSelect2Choice<T, Collection<T
     @Override
     protected String getModelValue() {
 	Collection<T> values = getModelObject();
-	
+
 	// if values is null or empty set value attribute to an empty string rather then '[]' which does not make sense
 	if (values == null || values.isEmpty()) {
 	    return "";
 	}
-	
+
 	return super.getModelValue();
     }
 
@@ -111,8 +112,8 @@ public class Select2MultiChoice<T> extends AbstractSelect2Choice<T, Collection<T
 		throw new RuntimeException("Error converting model objec to Json", e);
 	    }
 
-	    response.renderOnDomReadyJavaScript(JQuery.execute("$('#%s').select2('data', %s);", getMarkupId(),
-		    selection.toJson()));
+	    String js = JQuery.execute("$('#%s').select2('data', %s);", getMarkupId(), selection.toJson());
+	    response.render(OnDomReadyHeaderItem.forScript(js));
 	}
     }
 

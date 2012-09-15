@@ -29,6 +29,6 @@ public class WicketApplication extends WebApplication {
 
 	// configure select2 application settings
 	
-	ApplicationSettings.get().setIncludeJquery(true);
+	ApplicationSettings.get().setIncludeJquery(false);
     }
 }

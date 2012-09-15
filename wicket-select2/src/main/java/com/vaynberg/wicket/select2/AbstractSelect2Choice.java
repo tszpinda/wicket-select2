@@ -15,10 +15,13 @@ package com.vaynberg.wicket.select2;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
@@ -40,6 +43,8 @@ import org.json.JSONWriter;
  *            type of model object
  */
 abstract class AbstractSelect2Choice<T, M> extends HiddenField<M> implements IResourceListener {
+
+    private static final long serialVersionUID = 1L;
 
     private final Settings settings = new Settings();
 
@@ -88,6 +93,18 @@ abstract class AbstractSelect2Choice<T, M> extends HiddenField<M> implements IRe
 	add(new Select2ResourcesBehavior());
 
 	setOutputMarkupId(true);
+
+	add(new Behavior() {
+	    private static final long serialVersionUID = 1L;
+
+	    @Override
+	    public void renderHead(Component component, IHeaderResponse response) {
+		String js = JQuery.execute("$('#%s').select2(%s);", getJquerySafeMarkupId(), settings.toJson());
+		response.render(OnDomReadyHeaderItem.forScript(js));
+		// select current value
+		renderInitializationScript(response);
+	    }
+	});
     }
 
     /**
@@ -126,20 +143,6 @@ abstract class AbstractSelect2Choice<T, M> extends HiddenField<M> implements IRe
 	return getMarkupId().replace(".", "\\\\.");
     }
 
-    @Override
-    public void renderHead(IHeaderResponse response) {
-	super.renderHead(response);
-
-	// initialize select2
-
-	response.renderOnDomReadyJavaScript(JQuery.execute("$('#%s').select2(%s);", getJquerySafeMarkupId(),
-		settings.toJson()));
-
-	// select current value
-
-	renderInitializationScript(response);
-    }
-
     /**
      * Renders script used to initialize the value of Select2 after it is created so it matches the current model
      * object.
@@ -147,7 +150,7 @@ abstract class AbstractSelect2Choice<T, M> extends HiddenField<M> implements IRe
      * @param response
      *            header response
      */
-    protected abstract void renderInitializationScript(IHeaderResponse response);
+    protected abstract void renderInitializationScript(org.apache.wicket.markup.head.IHeaderResponse response);
 
     @Override
     protected void onInitialize() {
